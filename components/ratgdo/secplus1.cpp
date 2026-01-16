@@ -312,7 +312,7 @@ namespace ratgdo {
 
         void Secplus1::handle_command(const RxCommand& cmd)
         {
-            if (cmd.req == CommandType::TOGGLE_DOOR_RELEASE || cmd.resp == 0x31) {
+            if (cmd.req == CommandType::TOGGLE_DOOR_RELEASE) {
                 ESP_LOGD(TAG, "wall panel is starting");
                 this->flags_.wall_panel_starting = true;
             } else if (cmd.req == CommandType::QUERY_DOOR_STATUS) {
