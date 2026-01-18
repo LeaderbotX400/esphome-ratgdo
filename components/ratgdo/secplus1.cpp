@@ -42,7 +42,7 @@ namespace esphome
                     (millis() - this->last_tx_) > 200 && // don't send twice in a period
                     (millis() - this->last_rx_) > 50 &&  // time to send it
                     tx_cmd &&                            // have pending command
-                    !(this->flags_.is_0x37_panel && tx_cmd.value() == CommandType::TOGGLE_LOCK_PRESS) && this->wall_panel_emulation_state_ != WallPanelEmulationState::RUNNING)
+                    !(this->flags_.is_0x37_panel && tx_cmd.value() == CommandType::TOGGLE_LOCK_PRESS) && this->wall_panel_emulation_state_ == WallPanelEmulationState::RUNNING)
                 {
                     this->do_transmit_if_pending();
                 }
@@ -336,8 +336,8 @@ namespace esphome
                 switch (cmd.req)
                 {
                 case CommandType::TOGGLE_DOOR_RELEASE:
-                    ESP_LOGD(TAG, "wall panel is starting");
-                    this->flags_.wall_panel_starting = true;
+                    // Ignore wall panel starting signal to prevent emulation interruption
+                    ESP_LOGD(TAG, "wall panel starting signal ignored");
                     break;
                 case CommandType::QUERY_DOOR_STATUS:
                 {
