@@ -42,7 +42,7 @@ namespace esphome
                     (millis() - this->last_tx_) > 200 && // don't send twice in a period
                     (millis() - this->last_rx_) > 50 &&  // time to send it
                     tx_cmd &&                            // have pending command
-                    !(this->flags_.is_0x37_panel && tx_cmd.value() == CommandType::TOGGLE_LOCK_PRESS) && this->wall_panel_emulation_state_ == WallPanelEmulationState::RUNNING)
+                    !(this->flags_.is_0x37_panel && tx_cmd.value() == CommandType::TOGGLE_LOCK_PRESS) && (this->wall_panel_emulation_state_ == WallPanelEmulationState::RUNNING))
                 {
                     this->do_transmit_if_pending();
                 }
