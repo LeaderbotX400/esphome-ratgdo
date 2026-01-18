@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Optional, Tuple
 
-RATGDO_REPO = "ratgdo/esphome-ratgdo"
+RATGDO_REPO = "LeaderbotX400/esphome-ratgdo"
 
 
 def get_pr_info() -> Tuple[str, Optional[str]]:
@@ -65,12 +65,12 @@ def main():
         if (
             "external_components:" in content
             and "type: git" in content
-            and "ratgdo/esphome-ratgdo" in content
+            and "LeaderbotX400/esphome-ratgdo" in content
         ):
             # Replace the git source with local source, preserving indentation
             # This matches the exact structure: type: git, url: ..., ref: ...
             content = re.sub(
-                r"type:\s*git\s*\n(\s+)url:\s*https://github\.com/ratgdo/esphome-ratgdo\s*\n\s+ref:\s*\w+",
+                r"type:\s*git\s*\n(\s+)url:\s*https://github\.com/LeaderbotX400/esphome-ratgdo\s*\n\s+ref:\s*\w+",
                 rf"type: local\n\1path: {project_root}/components",
                 content,
             )
@@ -85,7 +85,7 @@ def main():
             )
 
         # Update remote_package to use local packages as a list
-        if "remote_package:" in content and "ratgdo/esphome-ratgdo" in content:
+        if "remote_package:" in content and "LeaderbotX400/esphome-ratgdo" in content:
             # Replace the entire remote_package with a list of local includes
             def replace_remote_package(match):
                 files = match.group(1)
@@ -94,7 +94,7 @@ def main():
                 return f"packages:\n  - !include {project_root}/{files}\n"
 
             content = re.sub(
-                r"packages:\s*\n\s+remote_package:\s*\n\s+url:\s*https://github\.com/ratgdo/esphome-ratgdo\s*\n(?:\s+ref:\s*\w+\s*\n)?\s+files:\s*\[([^\]]+)\]\s*\n(?:\s+refresh:\s*\S+\s*\n)?",
+                r"packages:\s*\n\s+remote_package:\s*\n\s+url:\s*https://github\.com/LeaderbotX400/esphome-ratgdo\s*\n(?:\s+ref:\s*\w+\s*\n)?\s+files:\s*\[([^\]]+)\]\s*\n(?:\s+refresh:\s*\S+\s*\n)?",
                 replace_remote_package,
                 content,
             )
