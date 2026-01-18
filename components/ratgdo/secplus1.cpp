@@ -312,10 +312,12 @@ namespace ratgdo {
 
         void Secplus1::handle_command(const RxCommand& cmd)
         {
-            if (cmd.req == CommandType::TOGGLE_DOOR_RELEASE) {
+            switch (cmd.req) {
+            case CommandType::TOGGLE_DOOR_RELEASE:
                 ESP_LOGD(TAG, "wall panel is starting");
                 this->flags_.wall_panel_starting = true;
-            } else if (cmd.req == CommandType::QUERY_DOOR_STATUS) {
+                break;
+            case CommandType::QUERY_DOOR_STATUS: {
 
                 DoorState door_state;
                 auto val = cmd.resp & 0x7;
@@ -326,18 +328,26 @@ namespace ratgdo {
                 // 101 0x5 closed
                 // 110 0x6 stopped
 
-                if (val == 0x2) {
-                    door_state = DoorState::OPEN;
-                } else if (val == 0x5) {
-                    door_state = DoorState::CLOSED;
-                } else if (val == 0x0 || val == 0x6) {
-                    door_state = DoorState::STOPPED;
-                } else if (val == 0x1) {
-                    door_state = DoorState::OPENING;
-                } else if (val == 0x4) {
-                    door_state = DoorState::CLOSING;
-                } else {
-                    door_state = DoorState::UNKNOWN;
+                switch (val) {
+                    case 0x2:
+                        door_state = DoorState::OPEN;
+                        break;
+                    case 0x5:
+                        door_state = DoorState::CLOSED;
+                        break;
+                    case 0x0:
+                    case 0x6:
+                        door_state = DoorState::STOPPED;
+                        break;
+                    case 0x1:
+                        door_state = DoorState::OPENING;
+                        break;
+                    case 0x4:
+                        door_state = DoorState::CLOSING;
+                        break;
+                    default:
+                        door_state = DoorState::UNKNOWN;
+                        break;
                 }
 
                 if (this->maybe_door_state != door_state) {
@@ -355,10 +365,12 @@ namespace ratgdo {
                     }
                     this->ratgdo_->received(door_state);
                 }
-            } else if (cmd.req == CommandType::QUERY_DOOR_STATUS_0x37) {
+                break;
+            }
+            case CommandType::QUERY_DOOR_STATUS_0x37: {
                 this->flags_.is_0x37_panel = true;
-                auto cmd = this->pending_tx();
-                if (cmd && cmd.value() == CommandType::TOGGLE_LOCK_PRESS) {
+                auto pending_cmd = this->pending_tx();
+                if (pending_cmd && pending_cmd.value() == CommandType::TOGGLE_LOCK_PRESS) {
                     this->do_transmit_if_pending();
                 } else {
                     // inject door status request
@@ -367,7 +379,9 @@ namespace ratgdo {
                         this->last_status_query_ = millis();
                     }
                 }
-            } else if (cmd.req == CommandType::QUERY_OTHER_STATUS) {
+                break;
+            }
+            case CommandType::QUERY_OTHER_STATUS: {
                 LightState light_state = to_LightState((cmd.resp >> 2) & 1, LightState::UNKNOWN);
 
                 if (!this->flags_.is_0x37_panel && light_state != this->maybe_light_state) {
@@ -384,19 +398,25 @@ namespace ratgdo {
                     this->lock_state = lock_state;
                     this->ratgdo_->received(lock_state);
                 }
-            } else if (cmd.req == CommandType::OBSTRUCTION) {
+                break;
+            }
+            case CommandType::OBSTRUCTION: {
                 ObstructionState obstruction_state = cmd.resp == 0 ? ObstructionState::CLEAR : ObstructionState::OBSTRUCTED;
                 this->ratgdo_->received(obstruction_state);
-            } else if (cmd.req == CommandType::TOGGLE_LIGHT_PRESS) {
+                break;
+            }
+            case CommandType::TOGGLE_LIGHT_PRESS:
                 // motion was detected, or the light toggle button was pressed
                 // either way it's ok to trigger motion detection
                 if (this->light_state == LightState::OFF) {
                     this->ratgdo_->received(MotionState::DETECTED);
                 }
-            } else if (cmd.req == CommandType::TOGGLE_DOOR_PRESS) {
+                break;
+            case CommandType::TOGGLE_DOOR_PRESS:
                 this->ratgdo_->received(ButtonState::PRESSED);
-            } else if (cmd.req == CommandType::TOGGLE_DOOR_RELEASE) {
-                this->ratgdo_->received(ButtonState::RELEASED);
+                break;
+            default:
+                break;
             }
         }
 
@@ -413,13 +433,19 @@ namespace ratgdo {
         void Secplus1::enqueue_command_pair(CommandType cmd)
         {
             auto now = millis();
-            if (cmd == CommandType::TOGGLE_DOOR_PRESS) {
-                this->enqueue_transmit(CommandType::TOGGLE_DOOR_RELEASE, now + 500);
-            } else if (cmd == CommandType::TOGGLE_LIGHT_PRESS) {
-                this->enqueue_transmit(CommandType::TOGGLE_LIGHT_RELEASE, now + 500);
-            } else if (cmd == CommandType::TOGGLE_LOCK_PRESS) {
-                this->enqueue_transmit(CommandType::TOGGLE_LOCK_RELEASE, now + 3500);
-            };
+            switch (cmd) {
+                case CommandType::TOGGLE_DOOR_PRESS:
+                    this->enqueue_transmit(CommandType::TOGGLE_DOOR_RELEASE, now + 500);
+                    break;
+                case CommandType::TOGGLE_LIGHT_PRESS:
+                    this->enqueue_transmit(CommandType::TOGGLE_LIGHT_RELEASE, now + 500);
+                    break;
+                case CommandType::TOGGLE_LOCK_PRESS:
+                    this->enqueue_transmit(CommandType::TOGGLE_LOCK_RELEASE, now + 3500);
+                    break;
+                default:
+                    break;
+            }
         }
 
         void Secplus1::enqueue_transmit(CommandType cmd, uint32_t time)
