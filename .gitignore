@@ -17,4 +17,4 @@ htmlcov/
 dist/
 build/
 
-.direnv/_codeql_detected_source_root
+.direnv/
