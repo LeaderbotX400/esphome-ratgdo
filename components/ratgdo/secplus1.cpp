@@ -448,6 +448,10 @@ namespace esphome
                     break;
                 }
                 case CommandType::TOGGLE_LIGHT_PRESS:
+                    if (!this->ratgdo_->wall_panel_control_enabled) {
+                        ESP_LOGD(TAG, "Wall panel control disabled, dropping light toggle");
+                        break;
+                    }
                     // motion was detected, or the light toggle button was pressed
                     // either way it's ok to trigger motion detection
                     if (this->light_state == LightState::OFF)
@@ -456,6 +460,10 @@ namespace esphome
                     }
                     break;
                 case CommandType::TOGGLE_DOOR_PRESS:
+                    if (!this->ratgdo_->wall_panel_control_enabled) {
+                        ESP_LOGD(TAG, "Wall panel control disabled, dropping door toggle");
+                        break;
+                    }
                     this->ratgdo_->received(ButtonState::PRESSED);
                     break;
                 default:

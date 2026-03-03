@@ -67,6 +67,13 @@ switch:
         output: true
     name: "Status obstruction"
     entity_category: diagnostic
+  - platform: ratgdo
+    id: "${id_prefix}_wall_panel"
+    type: wall_panel
+    name: "Wall panel"
+    icon: mdi:gesture-tap-button
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
 
 binary_sensor:
   - platform: ratgdo

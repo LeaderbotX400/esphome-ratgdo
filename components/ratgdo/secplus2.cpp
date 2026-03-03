@@ -387,12 +387,20 @@ namespace ratgdo {
                 this->ratgdo_->received(to_ObstructionState((cmd.byte1 >> 6) & 1, ObstructionState::UNKNOWN));
                 this->ratgdo_->received(to_LearnState((cmd.byte2 >> 5) & 1, LearnState::UNKNOWN));
             } else if (cmd.type == CommandType::LIGHT) {
-                this->ratgdo_->received(to_LightAction(cmd.nibble, LightAction::UNKNOWN));
+                if (!this->ratgdo_->wall_panel_control_enabled) {
+                    ESP_LOGD(TAG, "Wall panel control disabled, dropping light command");
+                } else {
+                    this->ratgdo_->received(to_LightAction(cmd.nibble, LightAction::UNKNOWN));
+                }
             } else if (cmd.type == CommandType::MOTOR_ON) {
                 this->ratgdo_->received(MotorState::ON);
             } else if (cmd.type == CommandType::DOOR_ACTION) {
-                auto button_state = (cmd.byte1 & 1) == 1 ? ButtonState::PRESSED : ButtonState::RELEASED;
-                this->ratgdo_->received(button_state);
+                if (!this->ratgdo_->wall_panel_control_enabled) {
+                    ESP_LOGD(TAG, "Wall panel control disabled, dropping door action");
+                } else {
+                    auto button_state = (cmd.byte1 & 1) == 1 ? ButtonState::PRESSED : ButtonState::RELEASED;
+                    this->ratgdo_->received(button_state);
+                }
             } else if (cmd.type == CommandType::MOTION) {
                 this->ratgdo_->received(MotionState::DETECTED);
             } else if (cmd.type == CommandType::OPENINGS) {

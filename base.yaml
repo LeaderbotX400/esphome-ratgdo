@@ -105,6 +105,13 @@ switch:
     name: "Learn"
     icon: mdi:plus-box
     entity_category: config
+  - platform: ratgdo
+    id: "${id_prefix}_wall_panel"
+    type: wall_panel
+    name: "Wall panel"
+    icon: mdi:gesture-tap-button
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
 
 binary_sensor:
   - platform: ratgdo

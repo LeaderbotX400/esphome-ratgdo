@@ -17,6 +17,9 @@ namespace ratgdo {
         case SwitchType::RATGDO_LED:
             ESP_LOGCONFIG(TAG, "  Type: LED");
             break;
+        case SwitchType::RATGDO_WALL_PANEL:
+            ESP_LOGCONFIG(TAG, "  Type: Wall Panel");
+            break;
         default:
             break;
         }
@@ -38,6 +41,18 @@ namespace ratgdo {
             });
 #endif
             break;
+        case SwitchType::RATGDO_WALL_PANEL:
+        {
+            auto restore = this->get_initial_state_with_restore_mode();
+            if (restore.has_value()) {
+                this->parent_->wall_panel_control_enabled = restore.value();
+                this->publish_state(restore.value());
+            } else {
+                this->parent_->wall_panel_control_enabled = true;
+                this->publish_state(true);
+            }
+            break;
+        }
         default:
             break;
         }
@@ -55,6 +70,10 @@ namespace ratgdo {
             break;
         case SwitchType::RATGDO_LED:
             this->pin_->digital_write(state);
+            this->publish_state(state);
+            break;
+        case SwitchType::RATGDO_WALL_PANEL:
+            this->parent_->wall_panel_control_enabled = state;
             this->publish_state(state);
             break;
         default:

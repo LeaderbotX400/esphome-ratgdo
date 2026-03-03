@@ -12,7 +12,7 @@ RATGDOSwitch = ratgdo_ns.class_("RATGDOSwitch", switch.Switch, cg.Component)
 SwitchType = ratgdo_ns.enum("SwitchType")
 
 CONF_TYPE = "type"
-TYPES = {"learn": SwitchType.RATGDO_LEARN, "led": SwitchType.RATGDO_LED}
+TYPES = {"learn": SwitchType.RATGDO_LEARN, "led": SwitchType.RATGDO_LED, "wall_panel": SwitchType.RATGDO_WALL_PANEL}
 
 
 CONFIG_SCHEMA = (

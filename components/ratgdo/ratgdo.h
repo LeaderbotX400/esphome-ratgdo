@@ -110,6 +110,8 @@ namespace ratgdo {
 
         single_observable<bool> sync_failed { false };
 
+        bool wall_panel_control_enabled { true };
+
         void set_output_gdo_pin(InternalGPIOPin* pin) { this->output_gdo_pin_ = pin; }
         void set_input_gdo_pin(InternalGPIOPin* pin) { this->input_gdo_pin_ = pin; }
         void set_input_obst_pin(InternalGPIOPin* pin) { this->input_obst_pin_ = pin; }
