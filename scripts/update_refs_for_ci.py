@@ -70,7 +70,7 @@ def main():
             # Replace the git source with local source, preserving indentation
             # This matches the exact structure: type: git, url: ..., ref: ...
             content = re.sub(
-                r"type:\s*git\s*\n(\s+)url:\s*https://github\.com/ratgdo/esphome-ratgdo\s*\n\s+ref:\s*\w+",
+                r"type:\s*git\s*\n(\s+)url:\s*https://github\.com/LeaderbotX400/esphome-ratgdo\s*\n\s+ref:\s*\w+",
                 rf"type: local\n\1path: {project_root}/components",
                 content,
             )
@@ -94,7 +94,7 @@ def main():
                 return f"packages:\n  - !include {project_root}/{files}\n"
 
             content = re.sub(
-                r"packages:\s*\n\s+remote_package:\s*\n\s+url:\s*https://github\.com/ratgdo/esphome-ratgdo\s*\n(?:\s+ref:\s*\w+\s*\n)?\s+files:\s*\[([^\]]+)\]\s*\n(?:\s+refresh:\s*\S+\s*\n)?",
+                r"packages:\s*\n\s+remote_package:\s*\n\s+url:\s*https://github\.com/LeaderbotX400/esphome-ratgdo\s*\n(?:\s+ref:\s*\w+\s*\n)?\s+files:\s*\[([^\]]+)\]\s*\n(?:\s+refresh:\s*\S+\s*\n)?",
                 replace_remote_package,
                 content,
             )

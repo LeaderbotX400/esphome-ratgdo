@@ -140,7 +140,7 @@ namespace ratgdo {
         ESP_LOGD(TAG, "| __  |  _  |_   _|   __|    \\|     |");
         ESP_LOGD(TAG, "|    -|     | | | |  |  |  |  |  |  |");
         ESP_LOGD(TAG, "|__|__|__|__| |_| |_____|____/|_____|");
-        ESP_LOGD(TAG, "https://paulwieland.github.io/ratgdo/");
+        ESP_LOGD(TAG, "https://paulwieland.github.io/LeaderbotX400/");
 
         this->subscribe_door_state([this](DoorState state, float position) {
             static DoorState lastState = DoorState::UNKNOWN;
@@ -230,7 +230,8 @@ namespace ratgdo {
             }
         }
 
-        if (door_state == DoorState::OPENING) {
+        switch (door_state) {
+        case DoorState::OPENING:
             // door started opening
             if (prev_door_state == DoorState::CLOSING) {
                 this->door_position_update();
@@ -245,7 +246,9 @@ namespace ratgdo {
             if (*this->opening_duration != 0) {
                 this->schedule_door_position_sync();
             }
-        } else if (door_state == DoorState::CLOSING) {
+            break;
+
+        case DoorState::CLOSING:
             // door started closing
             if (prev_door_state == DoorState::OPENING) {
                 this->door_position_update();
@@ -260,23 +263,32 @@ namespace ratgdo {
             if (*this->closing_duration != 0) {
                 this->schedule_door_position_sync();
             }
-        } else if (door_state == DoorState::STOPPED) {
+            break;
+
+        case DoorState::STOPPED:
             this->door_position_update();
             if (*this->door_position == DOOR_POSITION_UNKNOWN) {
                 this->door_position = 0.5; // best guess
             }
             this->cancel_position_sync_callbacks();
             cancel_timeout("door_query_state");
-        } else if (door_state == DoorState::OPEN) {
+            this->motor_state = MotorState::OFF;
+            break;
+
+        case DoorState::OPEN:
             this->door_position = 1.0;
             this->cancel_position_sync_callbacks();
-        } else if (door_state == DoorState::CLOSED) {
+            this->motor_state = MotorState::OFF;
+            break;
+
+        case DoorState::CLOSED:
             this->door_position = 0.0;
             this->cancel_position_sync_callbacks();
-        }
-
-        if (door_state == DoorState::OPEN || door_state == DoorState::CLOSED || door_state == DoorState::STOPPED) {
             this->motor_state = MotorState::OFF;
+            break;
+
+        default:
+            break;
         }
 
         if (door_state == DoorState::CLOSED && door_state != prev_door_state) {
@@ -357,12 +369,18 @@ namespace ratgdo {
         ESP_LOGD(TAG, "Light cmd=%s state=%s",
             LOG_STR_ARG(LightAction_to_string(light_action)),
             LOG_STR_ARG(LightState_to_string(*this->light_state)));
-        if (light_action == LightAction::OFF) {
+        switch (light_action) {
+        case LightAction::OFF:
             this->light_state = LightState::OFF;
-        } else if (light_action == LightAction::ON) {
+            break;
+        case LightAction::ON:
             this->light_state = LightState::ON;
-        } else if (light_action == LightAction::TOGGLE) {
+            break;
+        case LightAction::TOGGLE:
             this->light_state = light_state_toggle(*this->light_state);
+            break;
+        default:
+            break;
         }
     }
 
@@ -380,16 +398,24 @@ namespace ratgdo {
     {
         ESP_LOGD(TAG, "Paired device count, kind=%s count=%d", LOG_STR_ARG(PairedDevice_to_string(pdc.kind)), pdc.count);
 
-        if (pdc.kind == PairedDevice::ALL) {
+        switch (pdc.kind) {
+        case PairedDevice::ALL:
             this->paired_total = pdc.count;
-        } else if (pdc.kind == PairedDevice::REMOTE) {
+            break;
+        case PairedDevice::REMOTE:
             this->paired_remotes = pdc.count;
-        } else if (pdc.kind == PairedDevice::KEYPAD) {
+            break;
+        case PairedDevice::KEYPAD:
             this->paired_keypads = pdc.count;
-        } else if (pdc.kind == PairedDevice::WALL_CONTROL) {
+            break;
+        case PairedDevice::WALL_CONTROL:
             this->paired_wall_controls = pdc.count;
-        } else if (pdc.kind == PairedDevice::ACCESSORY) {
+            break;
+        case PairedDevice::ACCESSORY:
             this->paired_accessories = pdc.count;
+            break;
+        default:
+            break;
         }
     }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ratgdo.h"
+#include "../LeaderbotX400.h"
 #include "../ratgdo_state.h"
 #include "esphome/components/cover/cover.h"
 #include "esphome/core/component.h"

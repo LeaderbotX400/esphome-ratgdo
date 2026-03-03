@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ratgdo.h"
+#include "../LeaderbotX400.h"
 #include "../ratgdo_state.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/core/component.h"
@@ -11,7 +11,8 @@ namespace ratgdo {
 
     enum SwitchType {
         RATGDO_LEARN,
-        RATGDO_LED
+        RATGDO_LED,
+        RATGDO_EMULATION,
     };
 
     class RATGDOSwitch : public switch_::Switch, public RATGDOClient, public Component {

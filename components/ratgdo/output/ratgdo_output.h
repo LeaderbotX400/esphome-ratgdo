@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ratgdo.h"
+#include "../LeaderbotX400.h"
 #include "esphome/components/rtttl/rtttl.h"
 #include "esphome/core/component.h"
 

@@ -17,6 +17,9 @@ namespace ratgdo {
         case SwitchType::RATGDO_LED:
             ESP_LOGCONFIG(TAG, "  Type: LED");
             break;
+        case SwitchType::RATGDO_EMULATION:
+            ESP_LOGCONFIG(TAG, "  Type: Emulation");
+            break;
         default:
             break;
         }
@@ -38,6 +41,9 @@ namespace ratgdo {
             });
 #endif
             break;
+        case SwitchType::RATGDO_EMULATION:
+            this->publish_state(this->parent_->get_forced_emulation());
+            break;
         default:
             break;
         }
@@ -55,6 +61,10 @@ namespace ratgdo {
             break;
         case SwitchType::RATGDO_LED:
             this->pin_->digital_write(state);
+            this->publish_state(state);
+            break;
+        case SwitchType::RATGDO_EMULATION:
+            this->parent_->set_forced_emulation(state);
             this->publish_state(state);
             break;
         default:

@@ -121,6 +121,9 @@ namespace ratgdo {
         void set_discrete_open_pin(InternalGPIOPin* pin) { this->protocol_->set_discrete_open_pin(pin); }
         void set_discrete_close_pin(InternalGPIOPin* pin) { this->protocol_->set_discrete_close_pin(pin); }
 
+        void set_forced_emulation(bool forced) { this->protocol_->set_forced_emulation(forced); }
+        bool get_forced_emulation() const { return this->protocol_->get_forced_emulation(); }
+
         Result call_protocol(Args args);
 
         void received(const DoorState door_state);

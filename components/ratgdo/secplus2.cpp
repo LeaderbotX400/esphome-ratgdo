@@ -151,26 +151,36 @@ namespace ratgdo {
         Result Secplus2::call(Args args)
         {
             using Tag = Args::Tag;
-            if (args.tag == Tag::query_status) {
+            switch (args.tag) {
+            case Tag::query_status:
                 this->send_command(CommandType::GET_STATUS);
-            } else if (args.tag == Tag::query_openings) {
+                break;
+            case Tag::query_openings:
                 this->send_command(CommandType::GET_OPENINGS);
-            } else if (args.tag == Tag::get_rolling_code_counter) {
+                break;
+            case Tag::get_rolling_code_counter:
                 return Result(RollingCodeCounter { std::addressof(this->rolling_code_counter_) });
-            } else if (args.tag == Tag::set_rolling_code_counter) {
+            case Tag::set_rolling_code_counter:
                 this->set_rolling_code_counter(args.value.set_rolling_code_counter.counter);
-            } else if (args.tag == Tag::set_client_id) {
+                break;
+            case Tag::set_client_id:
                 this->set_client_id(args.value.set_client_id.client_id);
-            } else if (args.tag == Tag::query_paired_devices) {
+                break;
+            case Tag::query_paired_devices:
                 this->query_paired_devices(args.value.query_paired_devices.kind);
-            } else if (args.tag == Tag::query_paired_devices_all) {
+                break;
+            case Tag::query_paired_devices_all:
                 this->query_paired_devices();
-            } else if (args.tag == Tag::clear_paired_devices) {
+                break;
+            case Tag::clear_paired_devices:
                 this->clear_paired_devices(args.value.clear_paired_devices.kind);
-            } else if (args.tag == Tag::activate_learn) {
+                break;
+            case Tag::activate_learn:
                 this->activate_learn();
-            } else if (args.tag == Tag::inactivate_learn) {
+                break;
+            case Tag::inactivate_learn:
                 this->inactivate_learn();
+                break;
             }
             return { };
         }
@@ -378,44 +388,56 @@ namespace ratgdo {
         {
             ESP_LOG1(TAG, "Handle command: %s", LOG_STR_ARG(CommandType_to_string(cmd.type)));
 
-            if (cmd.type == CommandType::STATUS) {
-
+            switch (cmd.type) {
+            case CommandType::STATUS:
                 this->ratgdo_->received(to_DoorState(cmd.nibble, DoorState::UNKNOWN));
                 this->ratgdo_->received(to_LightState((cmd.byte2 >> 1) & 1, LightState::UNKNOWN));
                 this->ratgdo_->received(to_LockState((cmd.byte2 & 1), LockState::UNKNOWN));
                 // ESP_LOGD(TAG, "Obstruction: reading from byte2, bit2, status=%d", ((byte2 >> 2) & 1) == 1);
                 this->ratgdo_->received(to_ObstructionState((cmd.byte1 >> 6) & 1, ObstructionState::UNKNOWN));
                 this->ratgdo_->received(to_LearnState((cmd.byte2 >> 5) & 1, LearnState::UNKNOWN));
-            } else if (cmd.type == CommandType::LIGHT) {
+                break;
+
+            case CommandType::LIGHT:
                 this->ratgdo_->received(to_LightAction(cmd.nibble, LightAction::UNKNOWN));
-            } else if (cmd.type == CommandType::MOTOR_ON) {
+                break;
+
+            case CommandType::MOTOR_ON:
                 this->ratgdo_->received(MotorState::ON);
-            } else if (cmd.type == CommandType::DOOR_ACTION) {
+                break;
+
+            case CommandType::DOOR_ACTION: {
                 auto button_state = (cmd.byte1 & 1) == 1 ? ButtonState::PRESSED : ButtonState::RELEASED;
                 this->ratgdo_->received(button_state);
-            } else if (cmd.type == CommandType::MOTION) {
+                break;
+            }
+
+            case CommandType::MOTION:
                 this->ratgdo_->received(MotionState::DETECTED);
-            } else if (cmd.type == CommandType::OPENINGS) {
+                break;
+
+            case CommandType::OPENINGS:
                 this->ratgdo_->received(Openings { static_cast<uint16_t>((cmd.byte1 << 8) | cmd.byte2), cmd.nibble });
-            } else if (cmd.type == CommandType::SET_TTC) {
+                break;
+
+            case CommandType::SET_TTC:
                 this->ratgdo_->received(TimeToClose { static_cast<uint16_t>((cmd.byte1 << 8) | cmd.byte2) });
-            } else if (cmd.type == CommandType::PAIRED_DEVICES) {
+                break;
+
+            case CommandType::PAIRED_DEVICES: {
                 PairedDeviceCount pdc;
                 pdc.kind = to_PairedDevice(cmd.nibble, PairedDevice::UNKNOWN);
-                if (pdc.kind == PairedDevice::ALL) {
-                    pdc.count = cmd.byte2;
-                } else if (pdc.kind == PairedDevice::REMOTE) {
-                    pdc.count = cmd.byte2;
-                } else if (pdc.kind == PairedDevice::KEYPAD) {
-                    pdc.count = cmd.byte2;
-                } else if (pdc.kind == PairedDevice::WALL_CONTROL) {
-                    pdc.count = cmd.byte2;
-                } else if (pdc.kind == PairedDevice::ACCESSORY) {
-                    pdc.count = cmd.byte2;
-                }
+                pdc.count = cmd.byte2;
                 this->ratgdo_->received(pdc);
-            } else if (cmd.type == CommandType::BATTERY_STATUS) {
+                break;
+            }
+
+            case CommandType::BATTERY_STATUS:
                 this->ratgdo_->received(to_BatteryState(cmd.byte1, BatteryState::UNKNOWN));
+                break;
+
+            default:
+                break;
             }
 
             ESP_LOG1(TAG, "Done handle command: %s", LOG_STR_ARG(CommandType_to_string(cmd.type)));

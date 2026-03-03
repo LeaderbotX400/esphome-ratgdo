@@ -98,6 +98,9 @@ namespace ratgdo {
 
             const Traits& traits() const { return this->traits_; }
 
+            void set_forced_emulation(bool forced) override;
+            bool get_forced_emulation() const override { return this->forced_emulation_; }
+
             // methods not used by secplus1
             void set_open_limit(bool state) { }
             void set_close_limit(bool state) { }
@@ -152,6 +155,7 @@ namespace ratgdo {
             LockState maybe_lock_state { LockState::UNKNOWN };
             DoorState maybe_door_state { DoorState::UNKNOWN };
             WallPanelEmulationState wall_panel_emulation_state_ { WallPanelEmulationState::WAITING };
+            bool forced_emulation_ { false };
             struct {
                 uint8_t door_moving : 1;
                 uint8_t wall_panel_starting : 1;

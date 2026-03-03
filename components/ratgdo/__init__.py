@@ -142,12 +142,12 @@ async def to_code(config):
 
     cg.add_library(
         name="secplus",
-        repository="https://github.com/ratgdo/secplus#f98c3220356c27717a25102c0b35815ebbd26ccc",
+        repository="https://github.com/LeaderbotX400/secplus#f98c3220356c27717a25102c0b35815ebbd26ccc",
         version=None,
     )
     cg.add_library(
         name="espsoftwareserial",
-        repository="https://github.com/ratgdo/espsoftwareserial#autobaud",
+        repository="https://github.com/LeaderbotX400/espsoftwareserial#autobaud",
         version=None,
     )
 
