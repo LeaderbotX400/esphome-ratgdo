@@ -259,7 +259,8 @@ namespace ratgdo {
         {
             DoorState incoming = this->decode_door_state(cmd.data & DOOR_STATUS_MASK);
 
-            // Always fire the once-callback so door_action sequences proceed
+            // Fire the once-callback when the state changes so that
+            // door_action sequences (e.g. open-from-stopped) can proceed
             if (this->unconfirmed_door_.value != incoming) {
                 this->on_door_state_.trigger(incoming);
             }
@@ -271,7 +272,6 @@ namespace ratgdo {
                 return;
             }
 
-            this->unconfirmed_door_.value = incoming;
             this->door_state_ = incoming;
 
             if (incoming == DoorState::STOPPED || incoming == DoorState::OPEN || incoming == DoorState::CLOSED) {

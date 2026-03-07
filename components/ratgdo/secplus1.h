@@ -101,6 +101,8 @@ namespace ratgdo {
         };
         static const size_t EMULATION_INIT_LENGTH = 15; // preamble bytes before the main loop
         static const size_t EMULATION_TOTAL_LENGTH = sizeof(EMULATION_SEQUENCE);
+        static_assert(sizeof(EMULATION_SEQUENCE) > EMULATION_INIT_LENGTH,
+            "EMULATION_SEQUENCE must contain more bytes than the initialization preamble");
         static const size_t EMULATION_LOOP_LENGTH = EMULATION_TOTAL_LENGTH - EMULATION_INIT_LENGTH;
 
         // ─── Received Command ──────────────────────────────────────────────
@@ -268,7 +270,7 @@ namespace ratgdo {
                 uint8_t door_moving : 1;
                 uint8_t uses_alternate_query : 1; // true if GDO uses 0x37-style status queries
                 uint8_t reserved : 5;
-            } flags_ { 0, 0, 0, 0 };
+            } flags_ { };
         };
 
     } // namespace secplus1
