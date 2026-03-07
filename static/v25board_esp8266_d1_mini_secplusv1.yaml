@@ -25,8 +25,15 @@ esp8266:
   board: d1_mini
   restore_from_flash: true
 
+dashboard_import:
+  package_import_url: github://LeaderbotX400/esphome-ratgdo/v25board_esp8266_d1_mini_secplusv1.yaml@main
+
 packages:
-  - !include /home/runner/work/esphome-ratgdo/esphome-ratgdo/base_secplusv1.yaml
+  remote_package:
+    url: https://github.com/LeaderbotX400/esphome-ratgdo
+    files: [base_secplusv1.yaml]
+    refresh: 1s
+
 # Sync time with Home Assistant.
 time:
   - platform: homeassistant
