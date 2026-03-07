@@ -27,15 +27,8 @@ esp32:
   framework:
     type: arduino
 
-dashboard_import:
-  package_import_url: github://LeaderbotX400/esphome-ratgdo/v25board_esp32_d1_mini.yaml@main
-
 packages:
-  remote_package:
-    url: https://github.com/LeaderbotX400/esphome-ratgdo
-    files: [base.yaml]
-    refresh: 1s
-
+  - !include /home/runner/work/esphome-ratgdo/esphome-ratgdo/base.yaml
 # Sync time with Home Assistant.
 time:
   - platform: homeassistant

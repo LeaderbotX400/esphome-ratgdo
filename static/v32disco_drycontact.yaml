@@ -28,15 +28,8 @@ esp32:
   framework:
     type: arduino
 
-dashboard_import:
-  package_import_url: github://LeaderbotX400/esphome-ratgdo/v32disco_drycontact.yaml@main
-
 packages:
-  remote_package:
-    url: https://github.com/LeaderbotX400/esphome-ratgdo
-    ref: main
-    files: [base_drycontact.yaml]
-    refresh: 1s
+  - !include /home/runner/work/esphome-ratgdo/esphome-ratgdo/base_drycontact.yaml
   # remote_package: !include
   #   file: base_drycontact.yaml
 
