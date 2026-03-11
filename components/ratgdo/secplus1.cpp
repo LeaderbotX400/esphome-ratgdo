@@ -180,11 +180,21 @@ namespace ratgdo {
                 this->rx_state_.reading = true;
                 break;
             }
-            return { };
+            return {};
         }
 
         optional<RxCommand> Secplus1::try_read_remaining_bytes()
         {
+            // Check for timeout before consuming any bytes. If the partial
+            // packet has gone stale, reset so the next byte is treated as
+            // a fresh first byte rather than a continuation of the old one.
+            if (millis() - this->last_rx_time_ > RX_TIMEOUT_MS) {
+                ESP_LOGW(TAG, "[%d] Discarding incomplete packet: [%02X ...]",
+                    millis(), this->rx_state_.buffer[0]);
+                this->rx_state_.reset();
+                return this->try_read_first_byte();
+            }
+
             while (this->sw_serial_.available()) {
                 uint8_t byte = this->sw_serial_.read();
                 this->last_rx_time_ = millis();
@@ -200,14 +210,7 @@ namespace ratgdo {
                 }
             }
 
-            // Discard stale partial packet (a full packet arrives in ~20 ms)
-            if (millis() - this->last_rx_time_ > RX_TIMEOUT_MS) {
-                ESP_LOGW(TAG, "[%d] Discarding incomplete packet: [%02X ...]",
-                    millis(), this->rx_state_.buffer[0]);
-                this->rx_state_.reset();
-            }
-
-            return { };
+            return {};
         }
 
         optional<RxCommand> Secplus1::decode_packet() const
@@ -388,11 +391,11 @@ namespace ratgdo {
         optional<CommandType> Secplus1::peek_pending_tx() const
         {
             if (this->tx_queue_.empty()) {
-                return { };
+                return {};
             }
             auto& top = this->tx_queue_.top();
             if (top.send_at > millis()) {
-                return { };
+                return {};
             }
             return top.command;
         }
@@ -571,7 +574,7 @@ namespace ratgdo {
 
         Result Secplus1::call(Args args)
         {
-            return { };
+            return {};
         }
 
     } // namespace secplus1
