@@ -105,7 +105,14 @@ namespace ratgdo {
             // During the loop phase, attempt to send a pending user command
             // instead of the next emulation byte.
             bool in_loop_phase = index >= EMULATION_INIT_LENGTH;
-            if (!in_loop_phase || !this->transmit_if_pending()) {
+
+            // On alternate-query panels, do not inject pending user commands
+            // from the emulation loop. Lock commands (and any other pending
+            // actions) will instead be injected at the appropriate 0x37
+            // boundary via handle_alternate_query().
+            bool allow_pending_from_emulation = !in_loop_phase || !this->uses_alternate_query;
+
+            if (!allow_pending_from_emulation || !this->transmit_if_pending()) {
                 this->send_byte(this->read_emulation_byte(index));
             }
 
