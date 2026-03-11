@@ -110,7 +110,7 @@ namespace ratgdo {
             // from the emulation loop. Lock commands (and any other pending
             // actions) will instead be injected at the appropriate 0x37
             // boundary via handle_alternate_query().
-            bool allow_pending_from_emulation = !in_loop_phase || !this->uses_alternate_query;
+            bool allow_pending_from_emulation = !in_loop_phase || !this->flags_.uses_alternate_query;
 
             if (!allow_pending_from_emulation || !this->transmit_if_pending()) {
                 this->send_byte(this->read_emulation_byte(index));
@@ -293,6 +293,7 @@ namespace ratgdo {
 
         void Secplus1::handle_alternate_query(const RxCommand& cmd)
         {
+            (void)cmd;
             this->flags_.uses_alternate_query = true;
 
             // On alternate panels, we can inject pending commands at the 0x37 boundary
@@ -549,7 +550,7 @@ namespace ratgdo {
         void Secplus1::send_door_toggle()
         {
             this->schedule_tx(CommandType::TOGGLE_DOOR_PRESS);
-            this->schedule_tx(CommandType::QUERY_DOOR_STATUS);
+            this->schedule_tx(CommandType::QUERY_DOOR_STATUS, 1);
 
             if (this->door_state_ == DoorState::STOPPED
                 || this->door_state_ == DoorState::OPEN
