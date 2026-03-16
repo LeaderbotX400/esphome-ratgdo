@@ -50,13 +50,14 @@ namespace ratgdo {
 
         void Secplus1::sync()
         {
-            this->wall_panel_emulation_state_ = WallPanelEmulationState::WAITING;
+            // SEC+1 always runs in emulation mode.
+            this->wall_panel_emulation_state_ = WallPanelEmulationState::RUNNING;
             this->wall_panel_emulation_start_ = millis();
             this->flags_.wall_panel_starting = false;
             this->door_state = DoorState::UNKNOWN;
             this->light_state = LightState::UNKNOWN;
             this->scheduler_->cancel_timeout(this->ratgdo_, "wall_panel_emulation");
-            this->wall_panel_emulation();
+            this->wall_panel_emulation(0);
 
             this->scheduler_->set_timeout(this->ratgdo_, "", 45000, [this] {
                 if (this->door_state == DoorState::UNKNOWN) {
@@ -69,8 +70,10 @@ namespace ratgdo {
         void Secplus1::wall_panel_emulation(size_t index)
         {
             if (this->flags_.wall_panel_starting) {
-                this->wall_panel_emulation_state_ = WallPanelEmulationState::WAITING;
-            } else if (this->wall_panel_emulation_state_ == WallPanelEmulationState::WAITING) {
+                this->flags_.wall_panel_starting = false;
+            }
+
+            if (this->wall_panel_emulation_state_ == WallPanelEmulationState::WAITING) {
                 ESP_LOGD(TAG, "Looking for security+ 1.0 wall panel...");
 
                 if (this->door_state != DoorState::UNKNOWN || this->light_state != LightState::UNKNOWN) {

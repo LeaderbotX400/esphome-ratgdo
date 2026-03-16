@@ -1,15 +1,15 @@
 {
-    "name": "ratgdo",
+    "name": "leaderbotx400",
     "version": "0.0.2",
-    "description": "ratgdo for esphome",
-    "keywords": "ratgdo, esphome",
+    "description": "leaderbotx400 for esphome",
+    "keywords": "leaderbotx400, esphome",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ratgdo/esphome-ratgdo"
+        "url": "https://github.com/LeaderbotX400/esphome-leaderbotx400"
     },
     "authors": [],
     "license": "GPLv3",
-    "homepage": "https://github.com/esphome-ratgdo/esphome-esphome",
+    "homepage": "https://github.com/LeaderbotX400/esphome-leaderbotx400",
     "dependencies": {
         "secplus": "*"
     },

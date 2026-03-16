@@ -151,7 +151,7 @@ namespace ratgdo {
             LightState maybe_light_state { LightState::UNKNOWN };
             LockState maybe_lock_state { LockState::UNKNOWN };
             DoorState maybe_door_state { DoorState::UNKNOWN };
-            WallPanelEmulationState wall_panel_emulation_state_ { WallPanelEmulationState::WAITING };
+            WallPanelEmulationState wall_panel_emulation_state_ { WallPanelEmulationState::RUNNING };
             struct {
                 uint8_t door_moving : 1;
                 uint8_t wall_panel_starting : 1;
